@@ -71,7 +71,7 @@ The terraform code is -
           }
           
           
-**Step - 2**  Create an EBS volume. Here, I have created a volume of 1 GiB. A problem that would arise here is that we don't know that our instance is launched in which availability zone. But, we need to launch our EBS volume in the same zone otherwise they can't be connected. To resolve this, I have retrieved the availability zone of the instance & used it here. 
+**Step - 3**  Create an EBS volume. Here, I have created a volume of 1 GiB. A problem that would arise here is that we don't know that our instance is launched in which availability zone. But, we need to launch our EBS volume in the same zone otherwise they can't be connected. To resolve this, I have retrieved the availability zone of the instance & used it here. 
 
           resource "aws_ebs_volume" "my_vol" {
             availability_zone  =  aws_instance.test_ins.availability_zone
@@ -83,7 +83,7 @@ The terraform code is -
           }
           
           
-**Step - 3**  Attach your EBS volume to the instance. 
+**Step - 4**  Attach your EBS volume to the instance. 
 
           resource "aws_volume_attachment"  "ebs_att" {
             device_name  = "/dev/sdd"
@@ -102,7 +102,7 @@ I have also retrieved the public ip of my instance and stored it in a file local
 
 
           
-**Step - 4** Now, we need to mount our EBS volume to the folder /var/ww/html so that it can be deployed by the Apache Web Server. I have downloaded the code from Github at the same location.
+**Step - 5** Now, we need to mount our EBS volume to the folder /var/ww/html so that it can be deployed by the Apache Web Server. I have downloaded the code from Github at the same location.
 
         resource "null_resource" "mount"  {
 
@@ -139,7 +139,7 @@ I have also downloaded all the code & images from Github in my local system, so 
         
    
    
-**Step - 5**  Now, we create an S3 bucket on AWS. The code snippet for doing the same is as follows -
+**Step - 6**  Now, we create an S3 bucket on AWS. The code snippet for doing the same is as follows -
 
           resource "aws_s3_bucket" "sp_bucket" {
             bucket = "sparsh23"
@@ -151,7 +151,7 @@ I have also downloaded all the code & images from Github in my local system, so 
           }
           
           
-**Step - 6**  Now that the S3 bucket has been created, we will upload the images that we had downloaded from Github in our local system in the above step. Here, I have uploaded just one pic. You can upload more if you wish.
+**Step - 7**  Now that the S3 bucket has been created, we will upload the images that we had downloaded from Github in our local system in the above step. Here, I have uploaded just one pic. You can upload more if you wish.
 
             resource "aws_s3_bucket_object" "object" {
               bucket = "${aws_s3_bucket.sp_bucket.id}"
