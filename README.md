@@ -1,5 +1,3 @@
-########################################### Cloud_task1###########################################################
-
 # Why Cloud ?
   
 Many companies have a hard time maintaining their data centres. It's also inconvenient for new startups to spend a huge amount on infrastructures. A data centre would mean buying a whole system with lots of RAM, CPU & other necessary hardware. Then, hiring some expert guys to setup the whole system & to maintain it. Security, electricity, etc. would add on to the expenditure. 
