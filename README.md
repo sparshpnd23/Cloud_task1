@@ -149,7 +149,10 @@ I have also downloaded all the code & images from Github in my local system, so 
               Name        = "sparsh2301"
             }
           }
-          
+           locals {
+              s3_origin_id = "myS3Origin"
+            }
+            
           
 **Step - 7**  Now that the S3 bucket has been created, we will upload the images that we had downloaded from Github in our local system in the above step. Here, I have uploaded just one pic. You can upload more if you wish.
 
@@ -159,3 +162,78 @@ I have also downloaded all the code & images from Github in my local system, so 
               source = "C:/Users/AAAA/Pictures/pic1.jpg"
               acl    = "public-read"
             }
+            
+    
+ **Step - 8** Now, we create a CloudFront & connect it to our S3 bucket. The CloudFront ensures speedy delievery of content using the edge locations from AWS across the world.
+
+           resource "aws_cloudfront_distribution" "my_front" {
+             origin {
+                   domain_name = "${aws_s3_bucket.sp_bucket.bucket_regional_domain_name}"
+                   origin_id   = "${local.s3_origin_id}"
+
+           custom_origin_config {
+
+                   http_port = 80
+                   https_port = 80
+                   origin_protocol_policy = "match-viewer"
+                   origin_ssl_protocols = ["TLSv1", "TLSv1.1", "TLSv1.2"] 
+                  }
+                }
+                   enabled = true
+
+           default_cache_behavior {
+
+                   allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+                   cached_methods   = ["GET", "HEAD"]
+                   target_origin_id = "${local.s3_origin_id}"
+
+           forwarded_values {
+
+                 query_string = false
+
+           cookies {
+                    forward = "none"
+                   }
+              }
+
+                    viewer_protocol_policy = "allow-all"
+                    min_ttl                = 0
+                    default_ttl            = 3600
+                    max_ttl                = 86400
+
+          }
+            restrictions {
+                   geo_restriction {
+                     restriction_type = "none"
+                    }
+               }
+           viewer_certificate {
+                 cloudfront_default_certificate = true
+                 }
+          }
+          
+          
+          
+Now, we go to /var/www/html & update the link of the images with the link from CloudFront. As of now, only this part is manaul in my project. I'm trying my best to automate it & will update here as soon as I reach to success. Any help in this regard is strongly welcome.
+
+
+**Step - 9** Now, we write a terraform code snippet to automatically retrieve the public ip of our instance and open it in chrome. This will land us on the home page of our website that is present in /var/www/html.
+
+            resource "null_resource" "local_exec"  {
+
+
+            depends_on = [
+                null_resource.mount,
+              ]
+
+              provisioner "local-exec" {
+                  command = "start chrome  ${aws_instance.test_ins.public_ip}"
+                     }
+            }
+
+
+Finally, you'll see your home page open up. 
+
+
+Any suggestions are always welcome.
+
